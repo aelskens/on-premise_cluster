@@ -1,8 +1,10 @@
-ARG BASE_IMAGE=ubuntu:jammy
+ARG BASE_IMAGE=python:3.10.13-bullseye
 
 FROM ${BASE_IMAGE}
 
 ARG BASE_IMAGE
+
+WORKDIR $HOME
 
 # If this arg is not "autoscaler" then no autoscaler requirements will be included
 ARG AUTOSCALER="autoscaler"
@@ -10,10 +12,11 @@ ENV TZ=Europe/Brussels
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
 
+RUN sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata
+
 SHELL ["/bin/bash", "-c"]
 RUN sudo apt-get update -y && sudo apt-get upgrade -y \
     && sudo apt-get install -y \
-        tzdata \
         git \
         libjemalloc-dev \
         wget \
@@ -26,8 +29,9 @@ RUN sudo apt-get update -y && sudo apt-get upgrade -y \
             rsync \
             netbase \
             openssh-client \
-            gnupg; fi) \
-    && pip install --no-cache-dir \
+            gnupg; fi)
+
+RUN pip install --no-cache-dir \
         flatbuffers \
         cython==0.29.32 \
         # Necessary for Dataset to work properly.
@@ -35,9 +39,7 @@ RUN sudo apt-get update -y && sudo apt-get upgrade -y \
         psutil \
     # To avoid the following error on Jenkins:
     # AttributeError: 'numpy.ufunc' object has no attribute '__module__'
-    && pip uninstall -y dask \ 
-    && sudo rm -rf /var/lib/apt/lists/* \
-    && sudo apt-get clean \
+    && pip uninstall -y dask \
     && (if [ "$AUTOSCALER" = "autoscaler" ]; \
         then pip --no-cache-dir install \
         "redis>=3.5.0,<4.0.0" \
@@ -54,3 +56,6 @@ RUN sudo apt-get update -y && sudo apt-get upgrade -y \
         "azure-mgmt-resource==20.0.0" \
         "msrestazure==0.6.4"; \
     fi;)
+
+RUN sudo rm -rf /var/lib/apt/lists/* \
+    && sudo apt-get clean
