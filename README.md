@@ -14,7 +14,7 @@ To install the necessary tools on each node, use the `setup_node.sh` script incl
 
 On the node you choose to serve as the **control plane**, run `setup_node.sh` with the `--control-plane` flag. This installs additional dependencies specific to the control plane, along with the standard setup required for all nodes.
 
-> [!NOTE]    
+> **NOTE**  
 > This script is intended for Linux distributions, specifically Ubuntu. If you are using another Linux distribution, use the flag `-d` followed by the name of the distribution that match your operating system.
 
 </details>
@@ -26,7 +26,7 @@ On the node you choose to serve as the **control plane**, run `setup_node.sh` wi
 
 After setting up the control plane, use the `start_control-plane.sh` script to initialize and start the cluster.
 
-> [!NOTE]   
+> **NOTE**  
 > This script allows you, with the `--untained` flag, to specify whether the control plane should be "tainted" (i.e., restricted) to prevent scheduling workloads on the control plane node itself. See the [Kubernetes documentation on control plane node isolation](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#control-plane-node-isolation) for more details.
 
 ## Adding Nodes to the Cluster
