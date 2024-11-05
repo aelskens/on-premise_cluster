@@ -90,6 +90,7 @@ sudo modprobe br_netfilter
 sudo sysctl -w net.ipv4.ip_forward=1
 
 if $control_plane; then
+  # Install Helm
   curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
   chmod 700 get_helm.sh
   ./get_helm.sh
