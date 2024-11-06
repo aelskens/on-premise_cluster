@@ -27,7 +27,7 @@ On the node you choose to serve as the **control plane**, run `setup_node.sh` wi
 After setting up the control plane, use the `start_control-plane.sh` script to initialize and start the cluster.
 
 > **NOTE**  
-> This script allows you, with the `--untained` flag, to specify whether the control plane should be "tainted" (i.e., restricted) to prevent scheduling workloads on the control plane node itself. See the [Kubernetes documentation on control plane node isolation](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#control-plane-node-isolation) for more details.
+> This script allows you, with the `--untaint` flag, to specify whether the control plane should be "tainted" (i.e., restricted) to prevent scheduling workloads on the control plane node itself. See the [Kubernetes documentation on control plane node isolation](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#control-plane-node-isolation) for more details.
 
 ## Adding Nodes to the Cluster
 
