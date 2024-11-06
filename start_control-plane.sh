@@ -53,7 +53,7 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # Untaint the control plane
 if $untaint; then
-  kubectl taint nodes $HOSTNAME node-role.kubernetes.io/master-
+  kubectl taint nodes $HOSTNAME node-role.kubernetes.io/control-plane-
 fi
 
 # Get the join command
