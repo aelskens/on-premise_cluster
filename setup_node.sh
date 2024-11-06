@@ -42,7 +42,7 @@ while :; do
     case $1 in
         -h|--help) Help; exit;;
         -d|--distro) distro=$2; shift 2;;
-        --force-install-k8s) forceinstalldocker=true; shift;;
+        --force-install-docker) forceinstalldocker=true; shift;;
         --force-install-k8s) forceinstallk8s=true; shift;;
         --kubernetes-version) k8sversion=$2; shift 2;;
         --control-plane) controlplane=true; shift;;
@@ -60,7 +60,7 @@ sudo apt-get update
 sudo apt install apt-transport-https curl -y
 
 # Install Docker along with containerd (see https://docs.docker.com/engine/install/ubuntu/)
-if which docker | grep 'not found' || which containerd | grep 'not found' || $forceinstalldocker; then
+if $forceinstalldocker || which docker | grep 'not found' || which containerd | grep 'not found'; then
   # Remove existing installation (not complete)
   for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
   # Install Docker
@@ -84,7 +84,7 @@ sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/1' /etc/containerd/con
 sudo systemctl restart containerd
 
 # Install Kubernetes with kubeadm (see https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/)
-if which kubectl | grep 'not found' || which kubeadm | grep 'not found' || $forceinstallk8s; then
+if $forceinstallk8s || which kubectl | grep 'not found' || which kubeadm | grep 'not found'; then
   sudo apt-get update
   sudo apt install -y apt-transport-https ca-certificates curl gpg
   curl -fsSL https://pkgs.k8s.io/core:/stable:/v$k8sversion/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
