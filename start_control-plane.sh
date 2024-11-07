@@ -58,6 +58,7 @@ fi
 
 # Get the join command
 sudo kubeadm token create --print-join-command > join_command.sh
+sudo sed -i '1s/^/sudo /' join_command.sh
 sudo chmod +x join_command.sh
 
 # Deploy Flannel
