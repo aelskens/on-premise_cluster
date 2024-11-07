@@ -12,7 +12,7 @@ Help()
    echo "Usage: setup_node [OPTIONS]"
    echo "Options:"
    echo "-h, --help                    Print this help message"
-   echo "    --control-plane           To install additional dependencies specific to the control plane, along with the standard setup"
+   echo "    --control-plane           To remove the additionnal ressources deployed onto the control plane"
 }
 
 
