@@ -16,6 +16,8 @@ On the node you choose to serve as the **control plane**, run `setup_node.sh` wi
 
 > **NOTE**  
 > This script is intended for Linux distributions, specifically Ubuntu. If you are using another Linux distribution, use the flag `-d` followed by the name of the distribution that match your operating system.
+>
+> Additionally, the `setup_node.sh` script can be use by providing `--no-install` to skip all installation and still setting up the node for cluster use.
 
 </details>
 
@@ -35,6 +37,25 @@ To add additional nodes to the cluster, use the `./join_command.sh` script gener
 
 </details>
 
+<details open>
+<summary><b><font size="+2">Add persistence to cluster</font></b></summary>
+</br>
+
+The `nfs` subfolder provides resources designed to enable persistent storage within the cluster by deploying a Persistent Volume (PV) and Persistent Volume Claim (PVC) pair. These resources facilitate mounting a Network File System (NFS) directly onto the cluster's pods. The implementation of these resources draws inspiration from the detailed guidelines outlined in the [use-nfs-storage](https://docs.mirantis.com/mke/3.6/ops/deploy-apps-k8s/persistent-storage/use-nfs-storage.html) documentation.
+
+## Deploying the PV and PVC
+
+Run the `nfs_deployment.sh` script from the control plane to deploy the PV and PVC on your cluster.
+
+## Tearing down the PV and PVC
+
+Run the `nfs_delete.sh` script to release the PV and PVC resources.
+
+> **NOTE**  
+> For both `nfs_deployment.sh` and `nfs_delete.sh`, you can specify whether the deployment/removal should skip one of the resource or not with either providing `--no-pv` or `--no-pvc`.
+
+</details>
+
 <details>
 <summary><b><font size="+2">Manage K8s dashboard</font></b></summary>
 </br>
@@ -47,7 +68,7 @@ The `dashboard` subfolder contains resources for deploying the [K8s dashboard](h
 
 2. **Accessing the dashboard \[CLIENT MACHINE\]**
    - **Copy the kubeconfig file**: On the machine where you want to access the dashboard (client machine), copy the kubeconfig file from the control plane node (`$HOME/.kube/config`) to your local machine.
-   - **Start port forwarding**: Run the `port_forward_dashboard.sh` script to forward the dashboard service to your local machine. You will be prompted to provide the path to the kubeconfig file to ensure it connects to the correct cluster.
+   - **Start port forwarding**: Run the `dashboard_port_forward.sh` script to forward the dashboard service to your local machine. You will be prompted to provide the path to the kubeconfig file to ensure it connects to the correct cluster.
 
 3. **Access the dashboard \[CLIENT MACHINE\]**
    - Open your browser and go to `https://localhost:8443/#/login`.
@@ -55,7 +76,7 @@ The `dashboard` subfolder contains resources for deploying the [K8s dashboard](h
 
 ### Tearing down the dashboard
 
-To remove the dashboard deployment, run the `delete_dashboard.sh` script. This will delete all resources associated with the K8s dashboard.
+To remove the dashboard deployment, run the `dashboard_delete.sh` script. This will delete all resources associated with the K8s dashboard.
 
 </details>
 
