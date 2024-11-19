@@ -64,7 +64,7 @@ if ! $noinstall; then
   sudo apt install apt-transport-https curl -y
 
   # Install Docker along with containerd (see https://docs.docker.com/engine/install/ubuntu/)
-  if $forceinstalldocker || which docker | grep 'not found' || which containerd | grep 'not found'; then
+  if $forceinstalldocker || docker | grep 'not found' || containerd | grep 'not found'; then
     # Remove existing installation (not complete)
     for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
     # Install Docker
@@ -88,7 +88,7 @@ if ! $noinstall; then
   sudo systemctl restart containerd
 
   # Install Kubernetes with kubeadm (see https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/)
-  if $forceinstallk8s || which kubectl | grep 'not found' || which kubeadm | grep 'not found'; then
+  if $forceinstallk8s || kubectl | grep 'not found' || kubeadm | grep 'not found'; then
     sudo apt-get update
     sudo apt install -y apt-transport-https ca-certificates curl gpg
     curl -fsSL https://pkgs.k8s.io/core:/stable:/v$k8sversion/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
@@ -101,7 +101,7 @@ if ! $noinstall; then
     sudo systemctl enable --now kubelet
   fi
 
-  if $control_plane; then
+  if $controlplane; then
     # Install Helm
     curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
     chmod 700 get_helm.sh
