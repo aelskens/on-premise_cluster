@@ -101,7 +101,7 @@ if ! $noinstall; then
     sudo systemctl enable --now kubelet
   fi
 
-  if $controlplane; then
+  if $controlplane && ! [ $(which helm) ]; then
     # Install Helm
     curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
     chmod 700 get_helm.sh
