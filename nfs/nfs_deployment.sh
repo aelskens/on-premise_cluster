@@ -54,5 +54,6 @@ fi
 
 # Deploy the persistent volume claim bound to the NFS PV
 if $pvc; then
+  kubectl create namespace distributed-ray
   kubectl apply -f "$(dirname $0)/nfspersistentvolumeclaim.yaml"
 fi
