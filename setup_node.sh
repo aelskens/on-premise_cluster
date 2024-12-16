@@ -15,6 +15,7 @@ Help()
    echo "-d, --distro                  The Linux distribution that match the node's operating system, defaults to ubuntu"
    echo "    --no-install              Skip the installation part, defaults to false"
    echo "    --force-install-docker    Reinstall Docker, defaults to false. Uneventful when --no-install is provided"
+   echo "    --no-gpu-support          Skip the installation of nvidia-container-toolkit, defaults to false. Uneventful when --no-install is provided"
    echo "    --force-install-k8s       Reinstall Kubernetes, defaults to false. Uneventful when --no-install is provided"
    echo "    --kubernetes-version      The version of Kubernetes to install, defaults to 1.31"
    echo "    --control-plane           To install additional dependencies specific to the control plane, along with the standard setup. Uneventful when --no-install is provided"
@@ -28,6 +29,7 @@ Help()
 distro=ubuntu
 noinstall=false
 forceinstalldocker=false
+nogpusupport=false
 forceinstallk8s=false
 k8sversion=1.31
 controlplane=false
@@ -37,7 +39,7 @@ controlplane=false
 # Process the input options.                               #
 ############################################################
 
-args=$(getopt -n "$(basename "$0")" -o hd: --long help,distro:,no-install,force-install-docker,force-install-k8s,kubernetes-version:,control-plane -- "$@") || exit 1
+args=$(getopt -n "$(basename "$0")" -o hd: --long help,distro:,no-install,force-install-docker,no-gpu-support,force-install-k8s,kubernetes-version:,control-plane -- "$@") || exit 1
 eval set -- "$args"
 
 while :; do
@@ -46,6 +48,7 @@ while :; do
         -d|--distro) distro=$2; shift 2;;
         --no-install) noinstall=true; shift;;
         --force-install-docker) forceinstalldocker=true; shift;;
+        --no-gpu-support) nogpusupport=true; shift;;
         --force-install-k8s) forceinstallk8s=true; shift;;
         --kubernetes-version) k8sversion=$2; shift 2;;
         --control-plane) controlplane=true; shift;;
@@ -86,6 +89,21 @@ if ! $noinstall; then
   sudo containerd config default | sudo tee /etc/containerd/config.toml > /dev/null
   sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/1' /etc/containerd/config.toml
   sudo systemctl restart containerd
+
+  # Install nvidia-container-toolkit for GPU support
+  if ! $nogpusupport && ! [ $(which nvidia-ctk) ]; then
+    # Pop-OS has its own way to prioritize the package repo to install from, this allows to install the latest nvidia version
+    # cf. https://github.com/NVIDIA/nvidia-container-toolkit/issues/23#issuecomment-1149806160
+    sudo cp "$(dirname $0)/pop-os_nvidia-repo_fix"  /etc/apt/preferences.d/nvidia-docker-pin-1002
+    sudo apt-get update
+    sudo apt-get install -y nvidia-container-toolkit
+    sudo nvidia-ctk runtime configure --runtime=docker --set-as-default
+    sudo systemctl restart docker
+    # Requires nivida-container-toolkit>=1.14.0-rc2 for containerd support
+    # cf. https://github.com/NVIDIA/nvidia-docker/issues/1781#issuecomment-1690729112
+    sudo nvidia-ctk runtime configure --runtime=containerd --set-as-default --config=/etc/containerd/config.toml
+    sudo systemctl restart containerd
+  fi
 
   # Install Kubernetes with kubeadm (see https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/)
   if $forceinstallk8s || ! [ $(which kubectl) ] || ! [ $(which kubeadm) ]; then
