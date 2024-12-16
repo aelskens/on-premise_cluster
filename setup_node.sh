@@ -90,18 +90,22 @@ if ! $noinstall; then
   sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/1' /etc/containerd/config.toml
   sudo systemctl restart containerd
 
-  # Install nvidia-container-toolkit for GPU support
-  if ! $nogpusupport && ! [ $(which nvidia-ctk) ]; then
-    # Pop-OS has its own way to prioritize the package repo to install from, this allows to install the latest nvidia version
-    # cf. https://github.com/NVIDIA/nvidia-container-toolkit/issues/23#issuecomment-1149806160
-    sudo cp "$(dirname $0)/pop-os_nvidia-repo_fix"  /etc/apt/preferences.d/nvidia-docker-pin-1002
-    curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
-    && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
-      sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
-      sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
-    sudo sed -i -e '/experimental/ s/^#//g' /etc/apt/sources.list.d/nvidia-container-toolkit.list
-    sudo apt-get update
-    sudo apt-get install -y nvidia-container-toolkit
+  # Set up GPU support
+  if ! $nogpusupport; then
+    # Install nvidia-container-toolkit for GPU support
+    if ! [ $(which nvidia-ctk) ]; then
+      # Pop-OS has its own way to prioritize the package repo to install from, this allows to install the latest nvidia version
+      # cf. https://github.com/NVIDIA/nvidia-container-toolkit/issues/23#issuecomment-1149806160
+      sudo cp "$(dirname $0)/pop-os_nvidia-repo_fix"  /etc/apt/preferences.d/nvidia-docker-pin-1002
+      curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+      && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
+        sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+        sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+      sudo sed -i -e '/experimental/ s/^#//g' /etc/apt/sources.list.d/nvidia-container-toolkit.list
+      sudo apt-get update
+      sudo apt-get install -y nvidia-container-toolkit
+    fi
+    
     sudo nvidia-ctk runtime configure --runtime=docker --set-as-default
     sudo systemctl restart docker
     # Requires nivida-container-toolkit>=1.14.0-rc2 for containerd support
