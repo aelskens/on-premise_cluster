@@ -23,7 +23,7 @@ Help()
 
 untaint=false
 gpu=false
-
+HOSTNAME="$(hostname)"
 
 ############################################################
 # Process the input options.                               #
@@ -58,10 +58,10 @@ if $untaint; then
   kubectl taint nodes $HOSTNAME node-role.kubernetes.io/control-plane-
 fi
 
-# Get the join command
-sudo kubeadm token create --print-join-command > join_command.sh
-sudo sed -i '1s/^/sudo /' join_command.sh
-sudo chmod +x join_command.sh
+# # Get the join command
+# sudo kubeadm token create --print-join-command > join_command.sh
+# sudo sed -i '1s/^/sudo /' join_command.sh
+# sudo chmod +x join_command.sh
 
 # Deploy Flannel
 kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
