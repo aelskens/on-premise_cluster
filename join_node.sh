@@ -48,7 +48,7 @@ read -p "User: " username
 read -p "Hostname: " hostname
 
 # Get the join command
-OUTPUT="$(sudo kubeadm token create --print-join-command)"
+OUTPUT="sudo $(sudo kubeadm token create --print-join-command)"
 
 # Execute the join command on the remote node through ssh
 ssh -tt $username@$hostname "eval $OUTPUT"
