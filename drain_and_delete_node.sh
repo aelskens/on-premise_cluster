@@ -47,8 +47,9 @@ done
 # Get the node to drain and delete
 read -p "Node to drain and delete: " nodename
 
-# Delete Flannel
+# Delete k8s-device-plugin and Flannel
 if $controlplane; then
+  helm delete nvdp --namespace nvidia-device-plugin
   kubectl delete -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 fi
 
