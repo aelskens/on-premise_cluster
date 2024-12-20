@@ -105,7 +105,7 @@ if ! $noinstall; then
       sudo apt-get update
       sudo apt-get install -y nvidia-container-toolkit
     fi
-    
+
     sudo nvidia-ctk runtime configure --runtime=docker --set-as-default
     sudo systemctl restart docker
     # Requires nivida-container-toolkit>=1.14.0-rc2 for containerd support
@@ -133,6 +133,7 @@ if ! $noinstall; then
     curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
     chmod 700 get_helm.sh
     ./get_helm.sh
+    rm -rf ./get_helm.sh
   fi
 fi
 
