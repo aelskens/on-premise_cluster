@@ -64,7 +64,7 @@ done
 
 if ! $noinstall; then
   sudo apt-get update
-  sudo apt install apt-transport-https curl -y
+  sudo apt install apt-transport-https curl nfs-common -y
 
   # Install Docker along with containerd (see https://docs.docker.com/engine/install/ubuntu/)
   if $forceinstalldocker || ! [ $(which docker) ] || ! [ $(which containerd) ]; then
