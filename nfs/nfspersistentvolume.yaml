@@ -9,5 +9,5 @@ spec:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   nfs:
-    server: lisanas
-    path: /volume1/kubernetes
+    server: r5d4
+    path: /datadisk
